@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Optional: Whitelist of allowed modules for security
-ALLOWED_MODULES = {"tasks.scraping_tasks", "devops_tasks", "hello", }
+ALLOWED_MODULES = {"tasks.scraping_tasks", "devops_tasks", "hello", "tasks.api_get" }
 
 @app.task
 def run_task(module, function, params, instructions={}):
