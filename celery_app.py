@@ -40,7 +40,7 @@ def run_task(module, function, params, instructions={}):
             raise ValueError("Params must be a dictionary.")
 
         logger.info(f"Executing task: module={module}, function={function}, params={params}")
-        if
+
         # Optional: Check if the module is allowed
         if ALLOWED_MODULES and module not in ALLOWED_MODULES:
             raise ImportError(f"Module '{module}' is not allowed.")
