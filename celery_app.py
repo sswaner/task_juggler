@@ -2,7 +2,7 @@ import logging
 from celery import Celery
 import importlib
 
-import notification_handler as nh
+import tasks.notification_handler as nh
 
 # Initialize the Celery app
 app = Celery(
