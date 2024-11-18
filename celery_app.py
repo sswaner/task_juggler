@@ -2,6 +2,8 @@ import logging
 from celery import Celery
 import importlib
 
+import notification_handler as nh
+
 # Initialize the Celery app
 app = Celery(
     'remote_tasks',
@@ -14,7 +16,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Optional: Whitelist of allowed modules for security
-ALLOWED_MODULES = {"scraping_tasks", "devops_tasks"}
+ALLOWED_MODULES = {"tasks.scraping_tasks", "devops_tasks", "hello", }
 
 @app.task
 def run_task(module, function, params, instructions={}):
@@ -57,18 +59,18 @@ def run_task(module, function, params, instructions={}):
         missing_params = [param for param in required_params if param not in params]
         if missing_params:
             if ntfy_fail:
-                ntfy_fail.send(f"Missing required parameters: {missing_params}")
+                nh.send_ntfy(f"Missing required parameters: {missing_params}")
             raise ValueError(f"Missing required parameters: {missing_params}")
 
         # Execute the function
         result = func(**params)
         logger.info(f"Task succeeded: module={module}, function={function}, result={result}")
         if ntfy_success:
-            ntfy_success.send(f"Task succeeded: module={module}, function={function}, result={result[:10]}")
+            nh.send_ntfy(f"Task succeeded: module={module}, function={function}, result={result[:10]}")
         return {"status": "success", "module": module, "function": function, "params": params, "result": result}
 
     except Exception as e:
         logger.error(f"Task failed: module={module}, function={function}, error={str(e)}", exc_info=True)
         if ntfy_fail:
-            ntfy_fail.send(f"Task failed: module={module}, function={function}, error={str(e)[:10]}")
+            nh.send_ntfy(f"Task failed: module={module}, function={function}, error={str(e)[:10]}")
         return {"status": "failed", "module": module, "function": function, "error": str(e)}
