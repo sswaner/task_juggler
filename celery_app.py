@@ -66,11 +66,11 @@ def run_task(module, function, params, instructions={}):
         result = func(**params)
         logger.info(f"Task succeeded: module={module}, function={function}, result={result}")
         if ntfy_success:
-            nh.send_ntfy(f"Task succeeded: module={module}, function={function}, result={result[:10]}")
+            nh.send_ntfy(f"Task succeeded: module={module}, function={function}")
         return {"status": "success", "module": module, "function": function, "params": params, "result": result}
 
     except Exception as e:
         logger.error(f"Task failed: module={module}, function={function}, error={str(e)}", exc_info=True)
         if ntfy_fail:
-            nh.send_ntfy(f"Task failed: module={module}, function={function}, error={str(e)[:10]}")
+            nh.send_ntfy(f"Task failed: module={module}, function={function}")
         return {"status": "failed", "module": module, "function": function, "error": str(e)}
